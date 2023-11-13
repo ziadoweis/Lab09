@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# VSCode Run Stuff
+/build
+/.vscode
