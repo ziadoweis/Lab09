@@ -9,15 +9,20 @@ int main(int argc, char* argv[])
     for (int i = 0; i < argc; i++) {
         printf("%s\n", argv[i]);
     }
+
+    // Yes or no do you want to read in from a file...
     
-    Graph g;
+    int tempNodes;
     int choice;
 
-    std::cout << "\nHow many nodes are in graph?" << std::endl;
+    std::cout << "\nHow many nodes are in the graph?" << std::endl;
 
-    std::cin >> g.nodes;
+    std::cin >> tempNodes;
     //std::cout << std::endl;
 
+    Graph g;
+    g.nodes = tempNodes;
+    g.initializeMatrix(tempNodes);
     bool progRun = true;
     bool chosen = false;
     int i, j;
@@ -32,12 +37,12 @@ int main(int argc, char* argv[])
                       << "Press 3 to find an edge in the graph\n" 
                       << "Press 4 to find the out edges of a graph\n"
                       << "Press 5 to find the in edges of a vertices\n"
-                      << "Press 6 to print out adjacency matrix\n" 
-                      << "Press 7 to quit" << std::endl;
+                      << "Press 6 to print out adjacency matrix\n"
+                      << "Press 8 to quit" << std::endl;
 
             std::cin >> choice;
             if ((choice == 1) || (choice == 2) || (choice == 3) || (choice == 4) || (choice == 5)
-                || (choice == 6) || (choice == 7)) { chosen = true; }
+                || (choice == 6) || (choice == 7) || (choice == 8)) { chosen = true; }
             else { chosen = false; }
         }
 
@@ -51,7 +56,7 @@ int main(int argc, char* argv[])
                 std::cin >> j;
 
                 std::cout << "Thank you. Adding edge at coordinates (" << i << "," << j << ") now." << std::endl;
-                g.addEdge(i,j);
+                g.addEdge(i-1,j-1);
                 chosen = false;
                 break;
             case 2:
@@ -62,7 +67,7 @@ int main(int argc, char* argv[])
                 std::cin >> j;
 
                 std::cout << "Thank you. Removing edge at coordinates (" << i << "," << j << ") now." << std::endl;
-                g.removeEdge(i,j);
+                g.removeEdge(i-1,j-1);
                 chosen = false;
                 break;
 
@@ -74,7 +79,7 @@ int main(int argc, char* argv[])
                 std::cin >> j;
 
                 std::cout << "Thank you. Checking for an edge at coordinates (" << i << "," << j << ") now." << std::endl;
-                if (g.hasEdge(i,j) == true) {
+                if (g.hasEdge(i-1,j-1) == true) {
                     std::cout << "There exists an edge at coordinates (" << i << "," << j << ")." << std::endl;
                 }
                 else {
@@ -89,7 +94,7 @@ int main(int argc, char* argv[])
                 std::cin >> i;
 
                 std::cout << "Thank you. Checking for Out-Edges now in row " << i << " now." << std::endl;
-                list = g.outEdges(i);
+                list = g.outEdges(i-1);
 
                 for (auto it = list.begin(); it != list.end(); it++)    {
                     if (it != list.begin()) {
@@ -108,7 +113,7 @@ int main(int argc, char* argv[])
                 std::cin >> j;
 
                 std::cout << "Thank you. Checking for In-Edges now in column " << j << " now." << std::endl;
-                list = g.outEdges(j);
+                list = g.outEdges(j-1);
 
                 for (auto it = list.begin(); it != list.end(); it++)    {
                     if (it != list.begin()) {
@@ -122,7 +127,7 @@ int main(int argc, char* argv[])
                 break;
 
             case 6:
-                std::cout << "Printing Out Adjacency Matrix. Please Standby." << std::endl;
+                std::cout << "\nPrinting Out Adjacency Matrix. Please Standby.\n" << std::endl;
                 g.PrintOutAdjacencyMatrix();
                 std::cout << "\nAdjacency Matrix has been printed." << std::endl;
                 chosen = false;
@@ -133,11 +138,17 @@ int main(int argc, char* argv[])
                           << "PROGRAM HAS ENDED. HAVE A NICE DAY!" << std::endl;
                 progRun = false;
                 break;
+
+            case 8:
+
+                break;
                     
             default:
                 break;
         }
     }
+
+
 
     return 0;
 }

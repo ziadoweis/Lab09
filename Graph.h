@@ -1,27 +1,45 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <iostream>
+#include <queue>
+#include <fstream>
 
 class Graph
 {
     public:
-        int nodes = 100;
+        int nodes;
+        bool found = false;
+
+        struct DFS_Output {
+            bool DFSfound;
+            std::string DFSpath;
+        };
+
+        struct BFS_Output {
+            bool BFSfound;
+            std::string BFSpath;
+        };
 
         Graph();
         ~Graph();
+
+        void initializeMatrix(int nodes);
 
         bool addEdge(int i, int j);
         bool removeEdge(int i, int j);
         bool hasEdge(int i, int j);
         std::vector<int> outEdges(int row);
         std::vector<int> inEdges(int col);
-        void PrintOutAdjacencyMatrix();
-        void DFS(int i, int j);
-        void BFS(int i, int j);
+        std::string PrintOutAdjacencyMatrix();
+        DFS_Output DFS(int start, int target, std::vector<bool>& visited, std::string & path);
+        BFS_Output BFS(int start, int target);
+        int matrixByFile(int nodes);
 
     private:
-        //int i;
-        //int j;
+        int rows;
+        int cols;
         std::vector<int> listOutEdges;
         std::vector<int> listInEdges;
         std::vector< std::vector<int> > matrix;
