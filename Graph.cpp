@@ -1,7 +1,9 @@
 #include "Graph.h"
 
 Graph::Graph()
-{
+{   
+    std::vector<int> listOutEdges;
+    std::vector<int> listInEdges;
     //matrix = std::vector< std::vector<int> > (nodes, std::vector<int>(nodes, 0));
     listOutEdges.reserve(100);
     listInEdges.reserve(100);
@@ -27,102 +29,149 @@ void Graph::initializeMatrix(int nodes)
 
 bool Graph::addEdge(int i, int j)
 {
-    if (matrix[i][j] != 1) {
-        matrix[i][j] = 1;
-        std::cout << "An edge has been added at the matrix coordinates (" << i << "," << j << ")" << std::endl;
-        return true;
-    } else {
-        std::cout << "The edge at those coordinates already exists. A new edge cannot be added in its place." << std::endl;
+    if ((i > nodes) || (j > nodes)) {
+        std::cout << "One or both of those coordinates are outside of the matrix bounds and do not exist in this matrix." << std::endl;
         return false;
+    } else {
+        i = i - 1;
+        j = j - 1;
+        if (matrix[i][j] == 0) {
+            matrix[i][j] = 1;
+            std::cout << "An edge has been added at the matrix coordinates (" << i+1 << "," << j+1 << ")" << std::endl;
+            return true;
+        } else {
+            std::cout << "The edge at those coordinates already exists. A new edge cannot be added in its place." << std::endl;
+            return false;
+        }
     }
 }
 
 bool Graph::removeEdge(int i, int j)
 {
-    if (matrix[i][j] != 0) {
-        matrix[i][j] = 0;
-        std::cout << "An edge has been removed at the matrix coordinates (" << i << "," << j << ")" << std::endl;
-        return true;
-    }
-    else {
-        std::cout << "The edge at those coordinates doesn't exist. It cannot be removed." << std::endl;
+    if ((i > nodes) || (j > nodes)) {
+        std::cout << "One or both of those coordinates are outside of the matrix bounds and do not exist in this matrix." << std::endl;
         return false;
+    } else {
+        i = i - 1;
+        j = j - 1;
+        if (matrix[i][j] == 1) {
+            matrix[i][j] = 0;
+            std::cout << "An edge has been removed at the matrix coordinates (" << i+1 << "," << j+1 << ")" << std::endl;
+            return true;
+        }
+        else {
+            std::cout << "The edge at those coordinates doesn't exist. It cannot be removed." << std::endl;
+            return false;
+        }
     }
 }
 
 bool Graph::hasEdge(int i, int j)
 {
-    if (matrix[i][j] == 1) { return true; }
-    return false;
+    if ((i > nodes) || (j > nodes)) {
+        std::cout << "One or both of those coordinates are outside of the matrix bounds and do not exist in this matrix." << std::endl;
+        return false;
+    } else {
+        i = i - 1;
+        j = j - 1;
+        if (matrix[i][j] == 1) { return true; }
+        return false;
+    }
 }
 
 std::vector<int> Graph::outEdges(int row)
 {
+    std::vector<int> listOutEdges;
+    int newRow = row - 1;
     // for j until col
         // if matrix(row,j) == 1
             // add to list
 
-    for (int j = 0; j < matrix.size(); j++) {
-        if (matrix[row][j] == 1) {
+    for (int j = 0; j < matrix[newRow].size(); j++) {
+        if (matrix[newRow][j] == 1) {
             listOutEdges.push_back(j+1);
         }
+        else if (matrix[newRow][j] == 0) {
+            continue;
+        }
     }
-
     return listOutEdges;
 }
 
 std::vector<int> Graph::inEdges(int col)
 {
+    std::vector<int> listInEdges;
+    int newCol = col - 1;
     //for i until row
         // matrix(i,col) == 1
             //add to list
 
-    for (int i = 0; i < matrix.size(); i++) {
-        if (matrix[i][col] == 1) {
+    for (int i = 0; i < matrix[newCol].size(); i++) {
+        if (matrix[i][newCol] == 1) {
             listInEdges.push_back(i+1);
+        }
+        else if (matrix[i][newCol] == 0) {
+            continue;
         }
     }
 
     return listInEdges;
 }
 
-std::string Graph::PrintOutAdjacencyMatrix()
+void Graph::PrintOutAdjacencyMatrix()
 {
-    std::string str = std::to_string(nodes) + "\n"; // used for file output
     for (int i = 0; i < matrix.size(); i++) {
         for (int j = 0; j < matrix[i].size(); j++) {
-            str += std::to_string(matrix[i][j]); // used for file output
             std::cout << matrix[i][j];
         }
-        if (i != matrix.size() - 1) { str += "\n"; } // used for file output
         std::cout << std::endl;
     } 
-    // roughly inspired by https://stackoverflow.com/questions/1784573/iterator-for-2d-vector
-    return str;
+    // roughly inspired by https://stackoverflow.com/suestions/1784573/iterator-for-2d-vector
 }
 
-Graph::DFS_Output Graph::DFS(int start, int target, std::vector<bool>& visited, std::string & path)
-{
- 
-    // Print the current node
-    path += std::to_string(start) + " ";
- 
-    // Set current node as visited
-    visited[start] = true;
+Graph::DFS_Output Graph::DFS(int start, int target)
+{   
+    DFS_Output d;
     
-    // For every node of the graph
-    for (int j = 0; j < matrix[start].size(); j++) {
-        if (j == target) { // checks if the target is found
-            found = true;
-            break;
-        }        
-        // If some node is adjacent to the current node
-        // and it has not already been visited
-        if (matrix[start][j] == 1 && (!visited[j]) && (found == false)) {
-            DFS(j, target, visited, path);
+    start = start - 1;
+    target = target - 1;
+
+    std::vector<bool> visited(matrix.size(), false);
+    std::stack<int> s;
+    std::string path;
+    found = false;
+    s.push(start+1);
+  
+    // Set source as visited
+    visited[start] = true;
+  
+    int vis;
+    while (!s.empty() && (found == false)) {
+        vis = s.top() - 1;
+  
+        // Print the current node
+        path += std::to_string(vis+1);
+        s.pop();
+  
+        // For every adjacent vertex to the current vertex
+        for (int j = 0; j < matrix[vis].size(); j++) {
+            if (matrix[vis][j] == 1 && (!visited[j]) && (found == false)) {
+  
+                // Push the adjacent node to the stack
+                s.push(j+1);
+  
+                // Set
+                visited[j] = true;
+
+                if (j == target) { //checks if the target is found
+                    path += std::to_string(j+1);
+                    found = true;
+                    break;
+                }
+
+            }
         }
     }
-    DFS_Output d;
     d.DFSfound = found;
     d.DFSpath = path;
     return d;
@@ -131,26 +180,24 @@ Graph::DFS_Output Graph::DFS(int start, int target, std::vector<bool>& visited, 
 
 Graph::BFS_Output Graph::BFS(int start, int target)
 {
-    // Visited vector to so that
-    // a vertex is not visited more than once
-    // Initializing the vector to false as no
-    // vertex is visited at the beginning
+    start = start - 1;
+    target = target - 1;
 
     std::vector<bool> visited(matrix.size(), false);
     std::queue<int> q;
     std::string path;
     found = false;
-    q.push(start);
+    q.push(start+1);
   
     // Set source as visited
     visited[start] = true;
   
     int vis;
     while (!q.empty() && (found == false)) {
-        vis = q.front();
+        vis = q.front() - 1;
   
         // Print the current node
-        path += std::to_string(vis) + " ";
+        path += std::to_string(vis+1);
         q.pop();
   
         // For every adjacent vertex to the current vertex
@@ -158,12 +205,13 @@ Graph::BFS_Output Graph::BFS(int start, int target)
             if (matrix[vis][j] == 1 && (!visited[j]) && (found == false)) {
   
                 // Push the adjacent node to the queue
-                q.push(j);
+                q.push(j+1);
   
                 // Set
                 visited[j] = true;
 
                 if (j == target) { //checks if the target is found
+                    path += std::to_string(j+1);
                     found = true;
                     break;
                 }
@@ -177,9 +225,9 @@ Graph::BFS_Output Graph::BFS(int start, int target)
     return b;
 }
 
-int Graph::matrixByFile(int nodes)
+int Graph::matrixFromInfile()
 {
-    std::string filename = "SampleMatrix.txt";
+    std::string filename = "../SampleMatrix.txt";
     std::ifstream file;
 
     file.open(filename);
@@ -188,19 +236,43 @@ int Graph::matrixByFile(int nodes)
         return 1;
     }
 
-    file >> nodes;
-    rows = nodes;
-    cols = nodes;
-    matrix.resize(nodes);
-    for (int i = 0; i < rows; ++i) matrix[i].resize(cols); // inspired by https://www.quora.com/How-do-I-read-a-matrix-from-a-file-in-C++
+    std::string rows;
+    std::vector<std::string> temp;
+    //std::vector<std::vector<int>> inputMatrix;
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            file >> matrix[i][j];
+    while (getline(file, rows))
+    {
+        temp.push_back(rows);
+    }
+
+    int numRows = temp.size();
+    int numCols = temp.size();
+
+    
+
+    for (int i = 0; i < numRows; i++) {
+        std::vector<char> charTemp(temp[i].begin(), temp[i].end());
+        std::vector<int> intTemp;
+        for (auto c : charTemp) {
+            intTemp.push_back(c - '0');
         }
+        matrix.push_back(intTemp);
     }
 
     file.close();
 
     return 0;
+} // inspired by https://www.suora.com/How-do-I-read-a-matrix-from-a-file-in-C++
+
+std::string Graph::matrixToOutfile() const
+{
+    std::string str = ""; // used for file output
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix[i].size(); j++) {
+            str += std::to_string(matrix[i][j]); // used for file output
+        }
+        if (i != matrix.size() - 1) { str += "\n"; } // used for file output
+    } 
+    // roughly inspired by https://stackoverflow.com/suestions/1784573/iterator-for-2d-vector
+    return str;
 }

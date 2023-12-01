@@ -1,0 +1,22 @@
+1. main.cpp takes in the amount of nodes, and asks if you want to read a from the SampleMatrix.txt file.
+
+2. The coordinate inputs and outputs in main.cpp are 1-indexed, i.e., an input of addEdge(1,2) would add an edge at
+   Row 1 (first row in matrix), Col 2 (second column in matrix).
+
+3. The professor said it was fine that we don't have a way to test DFS and BFS in main.cpp, since it wasn't
+   explicitly stated in the instructions. They are, however, tested in tests.cpp
+
+4. For tests.cpp, cd into the /build directory and run ./runTests
+
+5. Just in case it gets overridden by accident, here's the sample matrix from the input file:
+
+0010000000
+1000000000
+0101100100
+0000100100
+0000001000
+0001000000
+0000010000
+0000000011
+0000000001
+1010000000
